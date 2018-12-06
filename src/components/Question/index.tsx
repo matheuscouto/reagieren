@@ -22,7 +22,7 @@ const Question:React.FunctionComponent<IProps & IMapDispatchToProps> = ({questio
       <p>{question.wording}</p>
       {
         question.type==='multiple-choice'
-        ? <MultipleChoiceAnswer />
+        ? <MultipleChoiceAnswer answer={answer} options={question.options} handleSetAnswer={handleSetAnswer} />
         : <OpenAnswer answer={answer} handleSetAnswer={handleSetAnswer} />
       }
       <button type="submit">Responder</button>
