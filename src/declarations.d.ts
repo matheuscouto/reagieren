@@ -1,7 +1,16 @@
-export interface IQuestion {
-  type: 'open' | 'multiple-choice';
+interface IOpenQuestion {
+  type: 'open';
   wording: string;
-  answer: string | string[];
+  answer: string;
 }
+
+interface IMultipleChoiceQuestion {
+  type: 'multiple-choice';
+  wording: string;
+  answer: string;
+  options: string[];
+}
+
+export type IQuestion = IOpenQuestion | IMultipleChoiceQuestion;
 
 export interface IQuestionCollection { [id:string]: IQuestion }
