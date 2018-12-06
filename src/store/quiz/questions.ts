@@ -34,7 +34,7 @@ export default reducerWithInitialState(INITIAL_STATE)
 	.case(answerQuestion, (state:IState, questionId) => ({
 		...state,
 		unansweredQuestions: omit(state.unansweredQuestions, [questionId]),
-		AnsweredQuestions: assign(state.answeredQuestions, pick(state.unansweredQuestions, [questionId])),
+		answeredQuestions: assign(state.answeredQuestions, pick(state.unansweredQuestions, [questionId])),
 	}))
 	.build();
 
