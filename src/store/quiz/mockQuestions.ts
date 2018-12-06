@@ -16,6 +16,12 @@ const MockQuestions:IQuestionCollection = {
     wording: 'Quanto é 8 mais 8?',
     answer: '16',
   },
+  'flamfffafelekaml': {
+    type: 'multiple-choice',
+    wording: 'Quanto é 8 mais 8?',
+    answer: '16',
+    options: ['8','32','4','16'],
+  },
 }
 
 export default MockQuestions;

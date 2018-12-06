@@ -1,15 +1,17 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { ChangeEvent } from 'react';
 
-const MultipleChoice: React.FunctionComponent = () => {
+interface IProps {answer: string, handleSetAnswer: (e: ChangeEvent<HTMLInputElement>) => void, options: string[]}
 
-  const [answer, setAnswer] = useState('');
-  const handleSetAnswer = (e: ChangeEvent<HTMLInputElement>) => setAnswer(e.target.value)
-  
+const MultipleChoice: React.FunctionComponent<IProps> = ({answer, handleSetAnswer, options}) => {
   return (
     <>
-      <input type="radio" name="gender" value="a" checked={answer === 'a'} onChange={handleSetAnswer}/> Male<br/>
-      <input type="radio" name="gender" value="b" checked={answer === 'b'} onChange={handleSetAnswer}/> Female<br/>
-      <input type="radio" name="gender" value="c" checked={answer === 'c'} onChange={handleSetAnswer}/> Other
+      {
+        options.map((optionValue, index) => (
+          <>
+            <input type="radio" value={optionValue} key={index} checked={answer === optionValue} onChange={handleSetAnswer}/> {optionValue}<br/>
+          </>
+        ))
+      }
     </>
   );
 }
