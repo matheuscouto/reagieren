@@ -40,17 +40,3 @@ const mapStateToProps = (state: IRootState): IMapStateToProps => ({
 });
 
 export default connect(mapStateToProps)(QuizPage);
-
-/* TODO
-
-  1) Receive UnansweredQuestionsList
-  loop _____ (until UnansweredQuestionsList.lenght === 0)
-  |       \/
-  |        2) Pick random question and show
-  |        3) Get answer from user and check validity
-  |        4) Remove question from UnansweredQuestionsList and add it to AnsweredQuestionsList
-  |        5) Respond user
-  |        6) Pick next question
-  |_______/\
-
-*/
