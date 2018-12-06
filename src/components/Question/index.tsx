@@ -13,7 +13,7 @@ const Question:React.FunctionComponent<IProps & IMapDispatchToProps> = ({questio
   const handleSetAnswer = (e: ChangeEvent<HTMLInputElement>) => setAnswer(e.target.value);
   const handleAnswerQuestion = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    answerQuestion(questionId);
+    answerQuestion(questionId, answer);
     setAnswer('');
   }
   
@@ -39,11 +39,11 @@ import { answerQuestion } from '../../store/quiz/questions';
 /* *************************** */
 
 interface IMapDispatchToProps {
-	answerQuestion: (questionId: string) => void;
+	answerQuestion: (questionId: string, answer: string) => void;
 };
 
 const mapDispatchToProps = (dispatch: Dispatch): IMapDispatchToProps => ({
-	answerQuestion: (questionId) => dispatch(answerQuestion(questionId)),
+	answerQuestion: (questionId, answer) => dispatch(answerQuestion({questionId, answer})),
 })
 
 export default connect(null, mapDispatchToProps)(Question);
