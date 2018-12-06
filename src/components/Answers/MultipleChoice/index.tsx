@@ -7,9 +7,9 @@ const MultipleChoice: React.FunctionComponent<IProps> = ({answer, handleSetAnswe
     <>
       {
         options.map((optionValue, index) => (
-          <>
-            <input type="radio" value={optionValue} key={index} checked={answer === optionValue} onChange={handleSetAnswer}/> {optionValue}<br/>
-          </>
+          <div key={index}>
+            <input type="radio" value={optionValue} checked={answer === optionValue} onChange={handleSetAnswer}/> {optionValue}<br/>
+          </div>
         ))
       }
     </>
