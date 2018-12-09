@@ -24,6 +24,23 @@ interface IPickMultipleWordsQuestion {
   options: string[];
 }
 
+interface IWord {
+  word: string,
+  article: string,
+  meaning: string,
+}
+
+interface IDictionary {
+  [word: string]: IWord
+}
+
+export type IMoveSet = 'artikel' | 'konjugieren'
+
+export interface IHeroMoveSet {
+  artikel: number,
+  konjugieren: number,
+}
+
 export type IQuestion = IOpenQuestion | IMultipleChoiceQuestion | ICompleteQuestion | IPickMultipleWordsQuestion;
 
 export interface IQuestionCollection { [id:string]: IQuestion }

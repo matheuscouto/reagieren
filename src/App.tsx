@@ -1,13 +1,13 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { QuizPage } from './pages';
+import { CombatPage } from './pages';
 import styled from './styles/styled-components';
 
 const App: React.FunctionComponent = () => {
   
   return (
     <AppWrapper>
-      <Route exact path='/' component={QuizPage} />
+      <Route exact path='/' component={CombatPage} />
     </AppWrapper>
   );
 }

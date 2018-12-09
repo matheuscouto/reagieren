@@ -1,2 +1,2 @@
 export { default as ExamplePage } from './ExamplePage';
-export { default as QuizPage } from './QuizPage';
+export { default as CombatPage } from './CombatPage';

@@ -1,48 +1,46 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { IQuestion } from '../../declarations';
-import { MultipleChoiceAnswer, OpenAnswer, PickMultipleWordsAnswer } from '../';
+import React, { useState, FormEvent, useEffect } from 'react';
+import { IMoveSet, IWord } from '../../declarations';
+import { ArtikelAttack } from '../';
+import {mockDictionary, mockWordings} from './mockQuestions';
 
 interface IProps {
-  question: IQuestion;
-  questionId: string;
+  nextMoveCategory: IMoveSet;
 }
 
-const Question:React.FunctionComponent<IProps & IMapDispatchToProps> = ({question, questionId, answerQuestion}) => {
-  
-  const [answer, setAnswer] = useState<string[]>(['']);
-  const handleSetAnswer = (openQuestion: boolean) => (e: ChangeEvent<HTMLInputElement>) => {
-    if(!openQuestion) {
-      if (answer.indexOf(e.target.value) === -1)
-      setAnswer(answer.concat(e.target.value));
-      else setAnswer(answer.filter(ans => ans !== e.target.value));
-    } else {
-      let newAnswer = answer;
-      newAnswer[0] = e.target.value;
-      setAnswer(newAnswer)
-    }
-  }
-  const handleAnswerQuestion = (e: FormEvent<HTMLFormElement>) => {
+const Question:React.FunctionComponent<IProps & IMapDispatchToProps & IMapStateToProps> = ({attack, nextMoveCategory, selectedMoves}) => {
+  const currentMoveId = selectedMoves[nextMoveCategory][0];
+  const [attackEffectiveness, setAttackEffectiveness] = useState<boolean>(false);
+  useEffect(() => {
+    setNextMove(mockDictionary[currentMoveId])
+  },[selectedMoves])
+  const [currentMove, setNextMove] = useState<IWord | undefined>(undefined);
+
+  const handleAttack = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    answerQuestion(questionId, answer[0]);
-    setAnswer([''])
+    if(currentMove) {
+      attack('artikel', attackEffectiveness, currentMoveId, nextMoveCategory);
+    }
   }
 
   const renderAnswer = () => {
-    switch(question.type) {
-      case 'multiple-choice':
-        return <MultipleChoiceAnswer answer={answer[0]} options={question.options} handleSetAnswer={handleSetAnswer(true)} />
-      case 'open':
-        return <OpenAnswer answer={answer[0]} handleSetAnswer={handleSetAnswer(true)} />
-      case 'pick-multiple-words':
-        return <PickMultipleWordsAnswer answer={answer} options={question.options} handleSetAnswer={handleSetAnswer(false)} />
-      case 'complete':
-        return null
-    }
+    if(currentMove) 
+      switch(nextMoveCategory) {
+        case 'artikel':
+          return <ArtikelAttack word={currentMove} setAttackEffectiveness={setAttackEffectiveness} />
+        default:
+          return null;
+        // case 'open':
+        // //   return <OpenAnswer answer={answer[0]} handleSetAnswer={handleSetAnswer(true)} />
+        // // case 'pick-multiple-words':
+        // //   return <PickMultipleWordsAnswer answer={answer} options={question.options} handleSetAnswer={handleSetAnswer(false)} />
+        // case 'complete':
+      }
+    return null
   }
-  
+
   return (
-    <form action="" onSubmit={handleAnswerQuestion}>
-      <p>{question.wording}</p>
+    <form onSubmit={handleAttack}>
+      <p>{mockWordings[nextMoveCategory]}</p>
       {
         renderAnswer()
       }
@@ -51,20 +49,39 @@ const Question:React.FunctionComponent<IProps & IMapDispatchToProps> = ({questio
   )
 }
 
+const randomWord = function (obj:any) {
+  var keys = Object.keys(obj)
+  return obj[keys[ keys.length * Math.random() << 0]];
+};
+
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { answerQuestion } from '../../store/quiz/questions';
+import { attack } from '../../store/campaign/combat';
+import { selectSelectedMoves } from '../../store/campaign/hero';
+import { IRootState } from '../../store';
+
+/* *************************** */
+//      MAP STATE TO PROPS     //
+/* *************************** */
+
+interface IMapStateToProps {
+  selectedMoves: {[moveCategory: string]: string[]},
+};
+
+const mapStateToProps = (state: IRootState): IMapStateToProps => ({
+  selectedMoves: selectSelectedMoves(state),
+});
 
 /* *************************** */
 //    MAP DISPATCH TO PROPS    //
 /* *************************** */
 
 interface IMapDispatchToProps {
-	answerQuestion: (questionId: string, answer: string) => void;
+  attack: (move: IMoveSet, attackSuccess: boolean, moveId: string, moveCategory: string) => void;
 };
 
 const mapDispatchToProps = (dispatch: Dispatch): IMapDispatchToProps => ({
-	answerQuestion: (questionId, answer) => dispatch(answerQuestion({questionId, answer: [answer]})),
+	attack: (move, attackSuccess, moveId, moveCategory) => dispatch(attack({move, attackSuccess, moveId, moveCategory})),
 })
 
-export default connect(null, mapDispatchToProps)(Question);
+export default connect(mapStateToProps, mapDispatchToProps)(Question);
