@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { IQuestion } from '../../declarations';
-import { MultipleChoiceAnswer, OpenAnswer } from '../';
+import { MultipleChoiceAnswer, OpenAnswer, PickMultipleWordsAnswer } from '../';
 
 interface IProps {
   question: IQuestion;
@@ -9,21 +9,42 @@ interface IProps {
 
 const Question:React.FunctionComponent<IProps & IMapDispatchToProps> = ({question, questionId, answerQuestion}) => {
   
-  const [answer, setAnswer] = useState('');
-  const handleSetAnswer = (e: ChangeEvent<HTMLInputElement>) => setAnswer(e.target.value);
+  const [answer, setAnswer] = useState<string[]>(['']);
+  const handleSetAnswer = (openQuestion: boolean) => (e: ChangeEvent<HTMLInputElement>) => {
+    if(!openQuestion) {
+      if (answer.indexOf(e.target.value) === -1)
+      setAnswer(answer.concat(e.target.value));
+      else setAnswer(answer.filter(ans => ans !== e.target.value));
+    } else {
+      let newAnswer = answer;
+      newAnswer[0] = e.target.value;
+      setAnswer(newAnswer)
+    }
+  }
   const handleAnswerQuestion = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    answerQuestion(questionId, answer);
-    setAnswer('');
+    answerQuestion(questionId, answer[0]);
+    setAnswer([''])
+  }
+
+  const renderAnswer = () => {
+    switch(question.type) {
+      case 'multiple-choice':
+        return <MultipleChoiceAnswer answer={answer[0]} options={question.options} handleSetAnswer={handleSetAnswer(true)} />
+      case 'open':
+        return <OpenAnswer answer={answer[0]} handleSetAnswer={handleSetAnswer(true)} />
+      case 'pick-multiple-words':
+        return <PickMultipleWordsAnswer answer={answer} options={question.options} handleSetAnswer={handleSetAnswer(false)} />
+      case 'complete':
+        return null
+    }
   }
   
   return (
     <form action="" onSubmit={handleAnswerQuestion}>
       <p>{question.wording}</p>
       {
-        question.type==='multiple-choice'
-        ? <MultipleChoiceAnswer answer={answer} options={question.options} handleSetAnswer={handleSetAnswer} />
-        : <OpenAnswer answer={answer} handleSetAnswer={handleSetAnswer} />
+        renderAnswer()
       }
       <button type="submit">Responder</button>
     </form>
@@ -43,7 +64,7 @@ interface IMapDispatchToProps {
 };
 
 const mapDispatchToProps = (dispatch: Dispatch): IMapDispatchToProps => ({
-	answerQuestion: (questionId, answer) => dispatch(answerQuestion({questionId, answer})),
+	answerQuestion: (questionId, answer) => dispatch(answerQuestion({questionId, answer: [answer]})),
 })
 
 export default connect(null, mapDispatchToProps)(Question);

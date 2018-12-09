@@ -3,13 +3,13 @@ import actionCreatorFactory from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers/dist';
 import { IQuestionCollection } from '../../declarations';
 import { Selector } from '..';
-import { assign, omit, pick } from 'lodash';
+import { assign, omit, pick, difference } from 'lodash';
 import MockQuestions from './mockQuestions';
 
 // ACTIONS
 
 const actionCreator = actionCreatorFactory('QUIZ::QUESTIONS');
-export const answerQuestion = actionCreator<{ questionId: string, answer: string }>('ANSWER_QUESTION');
+export const answerQuestion = actionCreator<{ questionId: string, answer: string[] }>('ANSWER_QUESTION');
 
 // SELECTORS
 
@@ -38,7 +38,7 @@ export default reducerWithInitialState(INITIAL_STATE)
 		...state,
 		unansweredQuestions: omit(state.unansweredQuestions, [questionId]),
 		answeredQuestions: assign(state.answeredQuestions, pick(state.unansweredQuestions, [questionId])),
-		points: answer===state.unansweredQuestions[questionId].answer ? state.points+1 : state.points
+		points: difference(answer,state.unansweredQuestions[questionId].answer).length === 0 ? state.points+1 : state.points
 	}))
 	.build();
 
